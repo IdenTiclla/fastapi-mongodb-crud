@@ -3,13 +3,17 @@ from config.db import conn
 from schemas.user import userEntity, usersEntity
 from models.user import User
 from passlib.hash import sha256_crypt
-
+from bson import ObjectId
 user = APIRouter()
 
 
 @user.get('/users')
 def get_users():
     return usersEntity(conn.local.user.find())
+
+@user.get('/users/{id}')
+def find_user(id: str):
+    return userEntity(conn.local.user.find_one({"_id": ObjectId(id)}))
 
 @user.post('/users')
 def create_user(user: User):
